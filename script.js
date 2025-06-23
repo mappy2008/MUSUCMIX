@@ -22,13 +22,13 @@ function loadVideos() {
 
   if (player1) player1.loadVideoById(id1);
   else player1 = new YT.Player('player1', {
-    height: '180', width: '320', videoId: id1,
+    height: '360', width: '640', videoId: id1,
     playerVars: { 'autoplay': 0, 'controls': 1 }
   });
 
   if (player2) player2.loadVideoById(id2);
   else player2 = new YT.Player('player2', {
-    height: '180', width: '320', videoId: id2,
+    height: '360', width: '640', videoId: id2,
     playerVars: { 'autoplay': 0, 'controls': 1 }
   });
 }
