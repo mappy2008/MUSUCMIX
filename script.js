@@ -85,11 +85,11 @@ function toggleSolo() {
   soloState = !soloState;
   if (player1 && player2) {
     if (soloState) {
-      player1.mute();  muted[1] = true;
-      player2.unMute(); muted[2] = false;
-    } else {
       player1.unMute(); muted[1] = false;
       player2.mute();  muted[2] = true;
+    } else {
+      player1.mute();  muted[1] = true;
+      player2.unMute(); muted[2] = false;
     }
   }
 }
