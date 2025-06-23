@@ -30,6 +30,8 @@
     <button onclick="pauseBoth()">⏸ 一時停止</button>
     <button onclick="toggleSolo()">🔁 片方ずつ再生</button>
     <button onclick="resetBoth()">⏹ リセット</button>
+    <button onclick="unmuteBoth()">🔊 両方ミュート解除</button>
+
 
     <div class="slider-container">
       <label>🎚 Player1 音量：
@@ -45,6 +47,14 @@
       </label>
     </div>
 
+  <div class="slider-container">
+  <label>⏱ Player1 遅延調整（秒）：
+    <input type="range" id="delaySlider1" min="-3" max="3" value="0" step="0.1" oninput="updateDelay1(this.value)">
+    <span id="delayDisplay1">0.0s</span>
+  </label>
+</div>
+
+    
     <div class="slider-container">
       <label>⏱ Player2 遅延調整（秒）：
         <input type="range" id="delaySlider" min="-3" max="3" value="0" step="0.1" oninput="updateDelay(this.value)">
