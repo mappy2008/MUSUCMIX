@@ -77,3 +77,22 @@ function updateDelay(val) {
   delay = parseFloat(val);
   document.getElementById("delayDisplay").textContent = `${delay.toFixed(1)}s`;
 }
+
+let soloState = false;
+
+function toggleSolo() {
+  soloState = !soloState;
+  if (player1 && player2) {
+    if (soloState) {
+      player1.mute();
+      player2.unMute();
+      muted[1] = true;
+      muted[2] = false;
+    } else {
+      player1.unMute();
+      player2.mute();
+      muted[1] = false;
+      muted[2] = true;
+    }
+  }
+}
