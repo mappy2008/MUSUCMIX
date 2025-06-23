@@ -1,79 +1,55 @@
-let player1, player2;
-let delay = 0; // Player2遅延（秒）
-let muted = { 1: false, 2: false };
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>2動画同時再生（YouTube）</title>
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script defer src="script.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; }
+    iframe { margin: 10px; }
+    input, button { margin: 5px; }
+    .controls { margin: 10px auto; max-width: 500px; }
+    .slider-container { margin: 5px 0; }
+  </style>
+</head>
+<body>
+  <h1>2動画同時再生サイト（YouTube版）</h1>
 
-function extractVideoID(url) {
-  const match = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/);
-  return match ? match[1] : null;
-}
+  <input type="text" id="url1" placeholder="YouTube URL 1（本家など）"><br>
+  <input type="text" id="url2" placeholder="YouTube URL 2（カバーなど）"><br>
+  <button onclick="loadVideos()">🎵 動画を読み込む</button><br><br>
 
-function loadVideos() {
-  const url1 = document.getElementById("url1").value.trim();
-  const url2 = document.getElementById("url2").value.trim();
-  const id1 = extractVideoID(url1);
-  const id2 = extractVideoID(url2);
+  <div id="players">
+    <div id="player1"></div>
+    <div id="player2"></div>
+  </div>
 
-  if (!id1 || !id2) {
-    alert("両方のYouTubeリンクを正しく入力してください。");
-    return;
-  }
+  <div class="controls">
+    <button onclick="playBoth()">▶ 同時再生</button>
+    <button onclick="pauseBoth()">⏸ 一時停止</button>
+    <button onclick="resetBoth()">⏹ リセット</button>
 
-  if (player1) player1.loadVideoById(id1);
-  else player1 = new YT.Player('player1', {
-    height: '180', width: '320', videoId: id1,
-    playerVars: { 'autoplay': 0, 'controls': 1 },
-  });
+    <div class="slider-container">
+      <label>🎚 Player1 音量：
+        <input type="range" min="0" max="100" value="100" onchange="setVolume(1, this.value)">
+        <button onclick="toggleMute(1)">🔇ミュート</button>
+      </label>
+    </div>
 
-  if (player2) player2.loadVideoById(id2);
-  else player2 = new YT.Player('player2', {
-    height: '180', width: '320', videoId: id2,
-    playerVars: { 'autoplay': 0, 'controls': 1 },
-  });
-}
+    <div class="slider-container">
+      <label>🎚 Player2 音量：
+        <input type="range" min="0" max="100" value="100" onchange="setVolume(2, this.value)">
+        <button onclick="toggleMute(2)">🔇ミュート</button>
+      </label>
+    </div>
 
-function playBoth() {
-  if (player1 && player2) {
-    player1.seekTo(0);
-    player2.seekTo(Math.max(0, delay));
-    player1.playVideo();
-    setTimeout(() => {
-      player2.playVideo();
-    }, delay * 1000);
-  }
-}
-
-function pauseBoth() {
-  if (player1 && player2) {
-    player1.pauseVideo();
-    player2.pauseVideo();
-  }
-}
-
-function resetBoth() {
-  if (player1 && player2) {
-    player1.seekTo(0);
-    player2.seekTo(Math.max(0, delay));
-  }
-}
-
-function setVolume(playerNum, value) {
-  const volume = parseInt(value);
-  if (playerNum === 1 && player1) player1.setVolume(volume);
-  if (playerNum === 2 && player2) player2.setVolume(volume);
-}
-
-function toggleMute(playerNum) {
-  if (playerNum === 1 && player1) {
-    muted[1] = !muted[1];
-    player1[muted[1] ? 'mute' : 'unMute']();
-  }
-  if (playerNum === 2 && player2) {
-    muted[2] = !muted[2];
-    player2[muted[2] ? 'mute' : 'unMute']();
-  }
-}
-
-function updateDelay(val) {
-  delay = parseFloat(val);
-  document.getElementById("delayDisplay").textContent = `${delay.toFixed(1)}s`;
-}
+    <div class="slider-container">
+      <label>⏱ Player2 遅延調整（秒）：
+        <input type="range" id="delaySlider" min="-3" max="3" value="0" step="0.1" oninput="updateDelay(this.value)">
+        <span id="delayDisplay">0.0s</span>
+      </label>
+    </div>
+  </div>
+</body>
+</html>
