@@ -1,6 +1,8 @@
 let player1, player2;
-let delay = 0; // Player2遅延（秒）
 let muted = { 1: false, 2: false };
+let delay1 = 0; // Player1 遅延（秒）
+let delay2 = 0; // Player2 遅延（秒）
+let soloState = false; // 交互ミュートの状態（trueならplayer2 ON）
 
 function extractVideoID(url) {
   const match = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/);
@@ -21,39 +23,34 @@ function loadVideos() {
   if (player1) player1.loadVideoById(id1);
   else player1 = new YT.Player('player1', {
     height: '180', width: '320', videoId: id1,
-    playerVars: { 'autoplay': 0, 'controls': 1 },
+    playerVars: { 'autoplay': 0, 'controls': 1 }
   });
 
   if (player2) player2.loadVideoById(id2);
   else player2 = new YT.Player('player2', {
     height: '180', width: '320', videoId: id2,
-    playerVars: { 'autoplay': 0, 'controls': 1 },
+    playerVars: { 'autoplay': 0, 'controls': 1 }
   });
 }
 
 function playBoth() {
   if (player1 && player2) {
-    player1.seekTo(0);
-    player2.seekTo(Math.max(0, delay));
-    player1.playVideo();
-    setTimeout(() => {
-      player2.playVideo();
-    }, delay * 1000);
+    player1.seekTo(Math.max(0, delay1));
+    player2.seekTo(Math.max(0, delay2));
+
+    setTimeout(() => player1.playVideo(), delay1 * 1000);
+    setTimeout(() => player2.playVideo(), delay2 * 1000);
   }
 }
 
 function pauseBoth() {
-  if (player1 && player2) {
-    player1.pauseVideo();
-    player2.pauseVideo();
-  }
+  if (player1) player1.pauseVideo();
+  if (player2) player2.pauseVideo();
 }
 
 function resetBoth() {
-  if (player1 && player2) {
-    player1.seekTo(0);
-    player2.seekTo(Math.max(0, delay));
-  }
+  if (player1) player1.seekTo(Math.max(0, delay1));
+  if (player2) player2.seekTo(Math.max(0, delay2));
 }
 
 function setVolume(playerNum, value) {
@@ -73,26 +70,36 @@ function toggleMute(playerNum) {
   }
 }
 
-function updateDelay(val) {
-  delay = parseFloat(val);
-  document.getElementById("delayDisplay").textContent = `${delay.toFixed(1)}s`;
+function unmuteBoth() {
+  if (player1) {
+    player1.unMute();
+    muted[1] = false;
+  }
+  if (player2) {
+    player2.unMute();
+    muted[2] = false;
+  }
 }
-
-let soloState = false;
 
 function toggleSolo() {
   soloState = !soloState;
   if (player1 && player2) {
     if (soloState) {
-      player1.mute();
-      player2.unMute();
-      muted[1] = true;
-      muted[2] = false;
+      player1.mute();  muted[1] = true;
+      player2.unMute(); muted[2] = false;
     } else {
-      player1.unMute();
-      player2.mute();
-      muted[1] = false;
-      muted[2] = true;
+      player1.unMute(); muted[1] = false;
+      player2.mute();  muted[2] = true;
     }
   }
+}
+
+function updateDelay1(val) {
+  delay1 = parseFloat(val);
+  document.getElementById("delayDisplay1").textContent = `${delay1.toFixed(1)}s`;
+}
+
+function updateDelay(val) {
+  delay2 = parseFloat(val);
+  document.getElementById("delayDisplay").textContent = `${delay2.toFixed(1)}s`;
 }
